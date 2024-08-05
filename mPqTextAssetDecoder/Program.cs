@@ -8,7 +8,7 @@ namespace mPqTextAssetDecoder
     {
         static int Main(string[] args)
         {
-            if (args.Length < 1)
+            if (args.Length < 3)
             {
                 PrintUsage();
                 return -1;
@@ -36,25 +36,22 @@ namespace mPqTextAssetDecoder
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < md.messages.Count; i++)
             {
-                sb.AppendFormat("{0}\t{1}\n", i, md.messages[i]);
+                sb.AppendFormat("{0}\n", md.messages[i]);
             }
 
             var decoded = sb.ToString();
-            if (args.Length > 1)
-            {
-                File.WriteAllText(args[1], decoded);
-            }
-            else
-            {
-                Console.Write(decoded);
-            }
+            File.WriteAllText(args[1], decoded);
+
+            var reencoded = md.Encode(MessageData.Coded.DATA_NO_CODED);
+            File.WriteAllBytes(args[2], reencoded);
         }
 
         static void PrintUsage()
         {
-            Console.WriteLine("Usage: mPqTextAssetDecoder input [output]");
+            Console.WriteLine("Usage: mPqTextAssetDecoder input output reencoded");
             Console.WriteLine("  input: TextAsset bytes file");
-            Console.WriteLine("  output: output file name, if not give, output to stdout");
+            Console.WriteLine("  output: Output file path for decoded file");
+            Console.WriteLine("  reencoded: Output file path for reencoded file");
         }
     }
 }

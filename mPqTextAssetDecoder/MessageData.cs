@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 
 namespace mPqTextAssetDecoder
 {
     class MessageData
     {
-        public enum Coded
+        public enum Coded : uint
         {
             DATA_CODED,
             DATA_NO_CODED
@@ -39,7 +40,7 @@ namespace mPqTextAssetDecoder
 
         public void Decode(byte[] data)
         {
-            using (MemoryStream ms = new MemoryStream(data))
+            using(MemoryStream ms = new MemoryStream(data))
             using(BinaryReader br = new BinaryReader(ms))
             {
                 header.numLangs = br.ReadUInt16();
@@ -95,6 +96,55 @@ namespace mPqTextAssetDecoder
             }
         }
 
+        public byte[] Encode(Coded encrypted)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            using (BinaryWriter bw = new BinaryWriter(ms))
+            {
+                bw.Write(header.numLangs);
+                bw.Write(header.numStrings);
+                bw.Write(header.maxLangBlockSize);
+                bw.Write((uint)encrypted);
 
+                for (int i=0; i<header.ofsLangBlocks.Count; i++)
+                    bw.Write(header.ofsLangBlocks[i]);
+
+                bw.Write(block.size);
+                for (int i=0; i<block.parameters.Count; i++)
+                {
+                    bw.Write(block.parameters[i].offset);
+                    bw.Write(block.parameters[i].len);
+                    bw.Write(block.parameters[i].userParam);
+                }
+
+                for (int i=0; i<messages.Count; i++)
+                {
+                    var mspb = block.parameters[i];
+                    var ms_offset = mspb.offset + header.ofsLangBlocks[0];
+                    ms.Seek(ms_offset, SeekOrigin.Begin);
+
+                    if (encrypted == Coded.DATA_CODED)
+                    {
+                        // TODO: Reverse this encoding
+                        /*var key = (ushort)(10627 * i + 31881);
+                        var msg_decode = "";
+                        var msg_len = mspb.len;
+                        for (int j = 0; j < msg_len; j++)
+                        {
+                            msg_decode += (char)(br.ReadUInt16() ^ key);
+                            key = (ushort)((ushort)(key >> 13) | 8 * key);
+                        }
+                        messages.Add(msg_decode);*/
+                    }
+                    else
+                    {
+                        for (int j=0; j<messages[i].Length; j++)
+                            bw.Write(messages[i][j]);
+                    }
+                }
+
+                return ms.ToArray();
+            }
+        }
     }
 }
