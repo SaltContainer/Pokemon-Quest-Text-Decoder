@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Text;
 
-namespace mPqTextAssetDecoder
+namespace Pokemon_Quest_Text_Decoder.Data
 {
     class MessageData
     {
@@ -33,15 +34,15 @@ namespace mPqTextAssetDecoder
             public uint size;
             public List<MessageStringParameterBlock> parameters;
         }
-        
+
         public MessageDataHeader header;
         public MessageLauguageBlock block;
         public List<string> messages;
 
         public void Decode(byte[] data)
         {
-            using(MemoryStream ms = new MemoryStream(data))
-            using(BinaryReader br = new BinaryReader(ms))
+            using (MemoryStream ms = new MemoryStream(data))
+            using (BinaryReader br = new BinaryReader(ms))
             {
                 header.numLangs = br.ReadUInt16();
                 header.numStrings = br.ReadUInt16();
@@ -87,13 +88,22 @@ namespace mPqTextAssetDecoder
                         var msg_len = mspb.len;
                         for (int j = 0; j < msg_len; j++)
                         {
-                            msg_decode += (char)(br.ReadUInt16());
+                            msg_decode += (char)br.ReadUInt16();
                         }
                         messages.Add(msg_decode);
                     }
                 }
 
             }
+        }
+
+        public string ExportText()
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i=0; i<messages.Count; i++)
+                sb.AppendFormat("{0}\n", messages[i]);
+
+            return sb.ToString();
         }
 
         public byte[] Encode(Coded encrypted)
@@ -106,18 +116,18 @@ namespace mPqTextAssetDecoder
                 bw.Write(header.maxLangBlockSize);
                 bw.Write((uint)encrypted);
 
-                for (int i=0; i<header.ofsLangBlocks.Count; i++)
+                for (int i = 0; i < header.ofsLangBlocks.Count; i++)
                     bw.Write(header.ofsLangBlocks[i]);
 
                 bw.Write(block.size);
-                for (int i=0; i<block.parameters.Count; i++)
+                for (int i = 0; i < block.parameters.Count; i++)
                 {
                     bw.Write(block.parameters[i].offset);
                     bw.Write(block.parameters[i].len);
                     bw.Write(block.parameters[i].userParam);
                 }
 
-                for (int i=0; i<messages.Count; i++)
+                for (int i = 0; i < messages.Count; i++)
                 {
                     var mspb = block.parameters[i];
                     var ms_offset = mspb.offset + header.ofsLangBlocks[0];
@@ -138,7 +148,7 @@ namespace mPqTextAssetDecoder
                     }
                     else
                     {
-                        for (int j=0; j<messages[i].Length; j++)
+                        for (int j = 0; j < messages[i].Length; j++)
                             bw.Write(messages[i][j]);
                     }
                 }
