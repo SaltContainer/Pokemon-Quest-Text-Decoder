@@ -30,8 +30,15 @@ partial class FormMain
     {
         btnOpen = new Button();
         btnSaveTxt = new Button();
-        btnTest = new Button();
+        btnSaveLabel = new Button();
         btnSaveBin = new Button();
+        listLabels = new ListBox();
+        rtxtLabel = new RichTextBox();
+        numUserParam = new NumericUpDown();
+        grpLabel = new GroupBox();
+        lbUserParam = new Label();
+        ((System.ComponentModel.ISupportInitialize)numUserParam).BeginInit();
+        grpLabel.SuspendLayout();
         SuspendLayout();
         // 
         // btnOpen
@@ -58,15 +65,14 @@ partial class FormMain
         btnSaveTxt.UseVisualStyleBackColor = true;
         btnSaveTxt.Click += btnSaveTxt_Click;
         // 
-        // btnTest
+        // btnSaveLabel
         // 
-        btnTest.Location = new Point(310, 182);
-        btnTest.Name = "btnTest";
-        btnTest.Size = new Size(110, 38);
-        btnTest.TabIndex = 2;
-        btnTest.Text = "Test";
-        btnTest.UseVisualStyleBackColor = true;
-        btnTest.Click += btnTest_Click;
+        btnSaveLabel.Location = new Point(91, 170);
+        btnSaveLabel.Name = "btnSaveLabel";
+        btnSaveLabel.Size = new Size(110, 38);
+        btnSaveLabel.TabIndex = 2;
+        btnSaveLabel.Text = "Save";
+        btnSaveLabel.UseVisualStyleBackColor = true;
         // 
         // btnSaveBin
         // 
@@ -80,17 +86,69 @@ partial class FormMain
         btnSaveBin.UseVisualStyleBackColor = true;
         btnSaveBin.Click += btnSaveBin_Click;
         // 
+        // listLabels
+        // 
+        listLabels.FormattingEnabled = true;
+        listLabels.ItemHeight = 15;
+        listLabels.Location = new Point(14, 63);
+        listLabels.Name = "listLabels";
+        listLabels.Size = new Size(244, 214);
+        listLabels.TabIndex = 4;
+        listLabels.SelectedIndexChanged += listLabels_SelectedIndexChanged;
+        // 
+        // rtxtLabel
+        // 
+        rtxtLabel.Location = new Point(6, 22);
+        rtxtLabel.Name = "rtxtLabel";
+        rtxtLabel.Size = new Size(195, 90);
+        rtxtLabel.TabIndex = 5;
+        rtxtLabel.Text = "";
+        // 
+        // numUserParam
+        // 
+        numUserParam.Location = new Point(82, 118);
+        numUserParam.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+        numUserParam.Name = "numUserParam";
+        numUserParam.Size = new Size(119, 23);
+        numUserParam.TabIndex = 6;
+        // 
+        // grpLabel
+        // 
+        grpLabel.Controls.Add(lbUserParam);
+        grpLabel.Controls.Add(numUserParam);
+        grpLabel.Controls.Add(rtxtLabel);
+        grpLabel.Controls.Add(btnSaveLabel);
+        grpLabel.Location = new Point(264, 63);
+        grpLabel.Name = "grpLabel";
+        grpLabel.Size = new Size(207, 214);
+        grpLabel.TabIndex = 7;
+        grpLabel.TabStop = false;
+        grpLabel.Text = "Label Data";
+        // 
+        // lbUserParam
+        // 
+        lbUserParam.AutoSize = true;
+        lbUserParam.Location = new Point(6, 120);
+        lbUserParam.Name = "lbUserParam";
+        lbUserParam.Size = new Size(70, 15);
+        lbUserParam.TabIndex = 7;
+        lbUserParam.Text = "User Param:";
+        // 
         // FormMain
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(483, 294);
-        Controls.Add(btnTest);
+        Controls.Add(grpLabel);
+        Controls.Add(listLabels);
         Controls.Add(btnSaveBin);
         Controls.Add(btnSaveTxt);
         Controls.Add(btnOpen);
         Name = "FormMain";
         Text = "Pokémon Quest Text Editor";
+        ((System.ComponentModel.ISupportInitialize)numUserParam).EndInit();
+        grpLabel.ResumeLayout(false);
+        grpLabel.PerformLayout();
         ResumeLayout(false);
     }
 
@@ -98,6 +156,11 @@ partial class FormMain
 
     private Button btnOpen;
     private Button btnSaveTxt;
-    private Button btnTest;
+    private Button btnSaveLabel;
     private Button btnSaveBin;
+    private ListBox listLabels;
+    private RichTextBox rtxtLabel;
+    private NumericUpDown numUserParam;
+    private GroupBox grpLabel;
+    private Label lbUserParam;
 }
