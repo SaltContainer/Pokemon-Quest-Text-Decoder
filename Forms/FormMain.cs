@@ -1,7 +1,7 @@
-using Pokemon_Quest_Text_Decoder.Data;
-using Pokemon_Quest_Text_Decoder.Engine;
+using QuestTextEditor.Data;
+using QuestTextEditor.Engine;
 
-namespace Pokemon_Quest_Text_Decoder;
+namespace QuestTextEditor;
 
 public partial class FormMain : Form
 {
@@ -23,6 +23,12 @@ public partial class FormMain : Form
 
     private void EnableComponents()
     {
+        btnOpen.Enabled = !IsLoaded;
+        btnOpenDataSet.Enabled = !IsLoaded;
+
+        btnSaveTxt.Enabled = IsLoaded;
+        btnSaveBin.Enabled = IsLoaded;
+
         rtxtLabel.Enabled = IsLoaded;
         btnSaveLabel.Enabled = IsLoaded;
         numUserParam.Enabled = IsLoaded;

@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Pokemon_Quest_Text_Decoder.Data
+namespace QuestTextEditor.Data
 {
     public class EncodedMessageData
     {
@@ -132,7 +132,7 @@ namespace Pokemon_Quest_Text_Decoder.Data
         {
             StringBuilder sb = new StringBuilder();
             for (int i=0; i<blocks[0].messages.Count; i++)
-                sb.AppendFormat("{0}\n", blocks[0].messages[i]);
+                sb.AppendLine(blocks[0].messages[i]);
 
             return sb.ToString();
         }

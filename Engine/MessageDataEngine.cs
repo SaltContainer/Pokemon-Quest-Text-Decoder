@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
-using Pokemon_Quest_Text_Decoder.Data;
+using QuestTextEditor.Data;
 
-namespace Pokemon_Quest_Text_Decoder.Engine
+namespace QuestTextEditor.Engine
 {
     public class MessageDataEngine
     {

@@ -1,4 +1,4 @@
-﻿namespace Pokemon_Quest_Text_Decoder;
+﻿namespace QuestTextEditor;
 
 partial class FormMain
 {
@@ -28,6 +28,7 @@ partial class FormMain
     /// </summary>
     private void InitializeComponent()
     {
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
         btnOpen = new Button();
         btnSaveTxt = new Button();
         btnSaveLabel = new Button();
@@ -60,7 +61,7 @@ partial class FormMain
         btnSaveTxt.Location = new Point(268, 12);
         btnSaveTxt.Name = "btnSaveTxt";
         btnSaveTxt.Size = new Size(118, 45);
-        btnSaveTxt.TabIndex = 1;
+        btnSaveTxt.TabIndex = 2;
         btnSaveTxt.Text = "Save Text";
         btnSaveTxt.TextImageRelation = TextImageRelation.ImageBeforeText;
         btnSaveTxt.UseVisualStyleBackColor = true;
@@ -71,7 +72,7 @@ partial class FormMain
         btnSaveLabel.Location = new Point(126, 170);
         btnSaveLabel.Name = "btnSaveLabel";
         btnSaveLabel.Size = new Size(110, 38);
-        btnSaveLabel.TabIndex = 2;
+        btnSaveLabel.TabIndex = 7;
         btnSaveLabel.Text = "Save Label";
         btnSaveLabel.UseVisualStyleBackColor = true;
         btnSaveLabel.Click += btnSaveLabel_Click;
@@ -143,7 +144,7 @@ partial class FormMain
         btnOpenDataSet.Location = new Point(140, 12);
         btnOpenDataSet.Name = "btnOpenDataSet";
         btnOpenDataSet.Size = new Size(122, 45);
-        btnOpenDataSet.TabIndex = 8;
+        btnOpenDataSet.TabIndex = 1;
         btnOpenDataSet.Text = "Open Label DataSet";
         btnOpenDataSet.TextImageRelation = TextImageRelation.ImageBeforeText;
         btnOpenDataSet.UseVisualStyleBackColor = true;
@@ -160,8 +161,9 @@ partial class FormMain
         Controls.Add(btnSaveTxt);
         Controls.Add(btnOpenDataSet);
         Controls.Add(btnOpen);
+        Icon = (Icon)resources.GetObject("$this.Icon");
         Name = "FormMain";
-        Text = "Pokémon Quest Text Editor";
+        Text = "Quest Text Editor";
         ((System.ComponentModel.ISupportInitialize)numUserParam).EndInit();
         grpLabel.ResumeLayout(false);
         grpLabel.PerformLayout();

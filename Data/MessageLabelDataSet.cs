@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Pokemon_Quest_Text_Decoder.Data
+namespace QuestTextEditor.Data
 {
     public class MessageLabelDataSet
     {

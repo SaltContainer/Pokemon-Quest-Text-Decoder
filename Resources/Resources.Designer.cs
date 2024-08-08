@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Pokemon_Quest_Text_Decoder.Resources {
+namespace QuestTextEditor.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Pokemon_Quest_Text_Decoder.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Pokemon_Quest_Text_Decoder.Resources.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("QuestTextEditor.Resources.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,16 @@ namespace Pokemon_Quest_Text_Decoder.Resources {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon ditto_quest {
+            get {
+                object obj = ResourceManager.GetObject("ditto_quest", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         

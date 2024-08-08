@@ -1,4 +1,4 @@
-namespace Pokemon_Quest_Text_Decoder;
+namespace QuestTextEditor;
 
 static class Program
 {
