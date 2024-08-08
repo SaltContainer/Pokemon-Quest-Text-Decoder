@@ -1,4 +1,5 @@
-﻿using Pokemon_Quest_Text_Decoder.Data;
+﻿using Newtonsoft.Json;
+using Pokemon_Quest_Text_Decoder.Data;
 
 namespace Pokemon_Quest_Text_Decoder.Engine
 {
@@ -7,6 +8,11 @@ namespace Pokemon_Quest_Text_Decoder.Engine
         public MessageData ReadMessageDataFromBinFile(string path)
         {
             return new MessageData(File.ReadAllBytes(path));
+        }
+
+        public MessageLabelDataSet ReadMessageLabelDataSetFromJSONFile(string path)
+        {
+            return JsonConvert.DeserializeObject<MessageLabelDataSet>(File.ReadAllText(path));
         }
 
         public void SaveMessageDataToBinFile(string path, MessageData data)

@@ -17,14 +17,14 @@
             encodedData.ReadFromBytes(rawData);
         }
 
-        public List<EncodedMessageData.MessageStringParameterBlock> GetStringParams(int lang)
+        public ushort GetUserParam(int lang, int labelIndex)
         {
-            return encodedData.blocks[lang].parameters;
+            return encodedData.blocks[lang].parameters[labelIndex].userParam;
         }
 
-        public void SetStringParams(int lang, List<EncodedMessageData.MessageStringParameterBlock> parameters)
+        public void SetUserParam(int lang, int labelIndex, ushort userParam)
         {
-            encodedData.blocks[lang].parameters = parameters;
+            encodedData.blocks[lang].parameters[labelIndex].userParam = userParam;
         }
 
         public string ExportAllText()

@@ -17,6 +17,8 @@ namespace Pokemon_Quest_Text_Decoder.Data
             public uint maxLangBlockSize;
             public Coded reserved;
             public List<uint> ofsLangBlocks;
+
+            public uint ByteSize => sizeof(ushort) + sizeof(ushort) + sizeof(uint) + sizeof(Coded) + ((uint)ofsLangBlocks.Count * sizeof(uint));
         }
 
         public class MessageStringParameterBlock
@@ -24,6 +26,8 @@ namespace Pokemon_Quest_Text_Decoder.Data
             public uint offset;
             public ushort len;
             public ushort userParam;
+
+            public static uint ByteSize => sizeof(uint) + sizeof(ushort) + sizeof(ushort);
         }
 
         public class MessageLanguageBlock
@@ -31,6 +35,7 @@ namespace Pokemon_Quest_Text_Decoder.Data
             public uint size;
             public List<MessageStringParameterBlock> parameters;
             public List<string> messages;
+            public List<byte[]> encodedMessages;
         }
 
         public MessageDataHeader header;
@@ -71,6 +76,7 @@ namespace Pokemon_Quest_Text_Decoder.Data
                 }
 
                 blocks[0].messages = new List<string>();
+                blocks[0].encodedMessages = new List<byte[]>();
                 for (int i=0; i<blocks[0].parameters.Count; i++)
                 {
                     var mspb = blocks[0].parameters[i];
@@ -81,6 +87,7 @@ namespace Pokemon_Quest_Text_Decoder.Data
                     for (int j=0; j<bytes.Length; j++)
                         bytes[j] = br.ReadByte();
 
+                    blocks[0].encodedMessages.Add(bytes);
                     blocks[0].messages.Add(DecodeString(bytes, header.reserved, (ushort)(10627 * i + 31881)));
                 }
             }
@@ -88,32 +95,33 @@ namespace Pokemon_Quest_Text_Decoder.Data
 
         public byte[] ConvertToBytes(Coded mode)
         {
+            RegenerateMetadata(mode);
+
             using (MemoryStream ms = new MemoryStream())
             using (BinaryWriter bw = new BinaryWriter(ms))
             {
                 bw.Write(header.numLangs);
                 bw.Write(header.numStrings);
                 bw.Write(header.maxLangBlockSize);
-                bw.Write((uint)mode);
+                bw.Write((uint)header.reserved);
 
                 for (int i=0; i<header.ofsLangBlocks.Count; i++)
                     bw.Write(header.ofsLangBlocks[i]);
 
-                bw.Write(blocks[0].size);
-                for (int i=0; i<blocks[0].parameters.Count; i++)
+                for (int i=0; i<blocks.Count; i++)
                 {
-                    bw.Write(blocks[0].parameters[i].offset);
-                    bw.Write(blocks[0].parameters[i].len);
-                    bw.Write(blocks[0].parameters[i].userParam);
-                }
+                    bw.Write(blocks[i].size);
+                    for (int j=0; j<blocks[i].parameters.Count; j++)
+                    {
+                        bw.Write(blocks[i].parameters[j].offset);
+                        bw.Write(blocks[i].parameters[j].len);
+                        bw.Write(blocks[i].parameters[j].userParam);
+                    }
 
-                for (int i=0; i<blocks[0].messages.Count; i++)
-                {
-                    var mspb = blocks[0].parameters[i];
-                    var ms_offset = mspb.offset + header.ofsLangBlocks[0];
-                    ms.Seek(ms_offset, SeekOrigin.Begin);
-                    var bytes = EncodeString(mode, blocks[0].messages[i]);
-                    bw.Write(bytes);
+                    for (int j=0; j<blocks[i].encodedMessages.Count; j++)
+                    {
+                        bw.Write(blocks[i].encodedMessages[j]);
+                    }
                 }
 
                 return ms.ToArray();
@@ -189,6 +197,38 @@ namespace Pokemon_Quest_Text_Decoder.Data
                     default:
                         return Array.Empty<byte>();
                 }
+            }
+        }
+
+        private void RegenerateMetadata(Coded mode)
+        {
+            header.numLangs = (ushort)blocks.Count;
+            header.numStrings = (ushort)blocks[0].messages.Count;
+            header.reserved = mode;
+
+            for (int i=0; i<blocks.Count; i++)
+            {
+                blocks[i].size = sizeof(uint) + ((uint)blocks[i].parameters.Count * MessageStringParameterBlock.ByteSize);
+                for (int j=0; j<blocks[i].messages.Count; j++)
+                {
+                    blocks[i].parameters[j].offset = blocks[i].size;
+
+                    var bytes = EncodeString(mode, blocks[i].messages[j]);
+                    blocks[i].encodedMessages[j] = bytes;
+
+                    blocks[i].parameters[j].len = (ushort)((bytes.Length - 2) / 2);
+
+                    blocks[i].size += (uint)bytes.Length;
+                }
+            }
+
+            header.maxLangBlockSize = blocks.Max(b => b.size);
+
+            uint currentBlockOffset = header.ByteSize;
+            for (int i=0; i<blocks.Count; i++)
+            {
+                header.ofsLangBlocks[i] = currentBlockOffset;
+                currentBlockOffset += blocks[i].size;
             }
         }
     }
