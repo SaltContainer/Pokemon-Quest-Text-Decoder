@@ -12,6 +12,8 @@ public partial class FormMain : Form
     private MessageDataEngine engine;
 
     public bool IsLoaded { get => data.data != null && labelDataSet.data != null; }
+    public int CurrentLanguage { get => (int)numLang.Value; }
+    public int CurrentLabel { get => listLabels.SelectedIndex; }
 
     public FormMain()
     {
@@ -32,27 +34,29 @@ public partial class FormMain : Form
         rtxtLabel.Enabled = IsLoaded;
         btnSaveLabel.Enabled = IsLoaded;
         numUserParam.Enabled = IsLoaded;
+
+        numLang.Enabled = IsLoaded;
     }
 
-    private void BindListBox()
+    private void BindListBox(int lang)
     {
         var source = labelDataSet.data.Data.Where(d => d.FileName == labelFileName);
         if (source.Any())
             listLabels.DataSource = source.Select(d => d.Id).Take(data.data.LabelCount).ToList();
         else
-            listLabels.DataSource = data.data[0];
+            listLabels.DataSource = data.data[lang];
     }
 
-    private void ReadLabelData(int selectedIndex)
+    private void ReadLabelData(int lang, int selectedIndex)
     {
-        rtxtLabel.Text = data.data[0, selectedIndex];
-        numUserParam.Value = data.data.GetUserParam(0, selectedIndex);
+        rtxtLabel.Text = data.data[lang, selectedIndex];
+        numUserParam.Value = data.data.GetUserParam(lang, selectedIndex);
     }
 
-    private void SetLabelData(int selectedIndex)
+    private void SetLabelData(int lang, int selectedIndex)
     {
-        data.data[0, selectedIndex] = rtxtLabel.Text;
-        data.data.SetUserParam(0, selectedIndex, (ushort)numUserParam.Value);
+        data.data[lang, selectedIndex] = rtxtLabel.Text;
+        data.data.SetUserParam(lang, selectedIndex, (ushort)numUserParam.Value);
     }
 
     private void UpdateListBox()
@@ -60,8 +64,16 @@ public partial class FormMain : Form
         if (IsLoaded)
         {
             AutoFindLabelFileName(data.path);
-            BindListBox();
-            SetLabelData(listLabels.SelectedIndex);
+            UpdateLanguage(CurrentLanguage);
+            SetLabelData(CurrentLanguage, CurrentLabel);
+        }
+    }
+
+    private void UpdateLangBox()
+    {
+        if (IsLoaded)
+        {
+            numLang.Maximum = data.data.LanguageCount - 1;
         }
     }
 
@@ -84,6 +96,14 @@ public partial class FormMain : Form
         }
     }
 
+    private void UpdateLanguage(int lang)
+    {
+        if (IsLoaded)
+        {
+            BindListBox(lang);
+        }
+    }
+
     private void btnOpen_Click(object sender, EventArgs e)
     {
         using OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -92,6 +112,7 @@ public partial class FormMain : Form
             data.data = engine.ReadMessageDataFromBinFile(openFileDialog.FileName);
             data.path = openFileDialog.FileName;
             UpdateListBox();
+            UpdateLangBox();
             EnableComponents();
         }
     }
@@ -104,6 +125,7 @@ public partial class FormMain : Form
             labelDataSet.data = engine.ReadMessageLabelDataSetFromJSONFile(openFileDialog.FileName);
             labelDataSet.path = openFileDialog.FileName;
             UpdateListBox();
+            UpdateLangBox();
             EnableComponents();
         }
     }
@@ -113,7 +135,7 @@ public partial class FormMain : Form
         using SaveFileDialog saveFileDialog = new SaveFileDialog();
         if (saveFileDialog.ShowDialog() == DialogResult.OK)
         {
-            engine.SaveMessageDataToTextFile(saveFileDialog.FileName, data.data);
+            engine.SaveMessageDataToTextFile(saveFileDialog.FileName, data.data, CurrentLanguage);
             MessageBox.Show("Successfully exported the text!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
@@ -130,11 +152,16 @@ public partial class FormMain : Form
 
     private void listLabels_SelectedIndexChanged(object sender, EventArgs e)
     {
-        ReadLabelData(listLabels.SelectedIndex);
+        ReadLabelData(CurrentLanguage, CurrentLabel);
     }
 
     private void btnSaveLabel_Click(object sender, EventArgs e)
     {
-        SetLabelData(listLabels.SelectedIndex);
+        SetLabelData(CurrentLanguage, CurrentLabel);
+    }
+
+    private void numLang_ValueChanged(object sender, EventArgs e)
+    {
+        UpdateLanguage(CurrentLanguage);
     }
 }

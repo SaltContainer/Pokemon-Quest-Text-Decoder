@@ -6,8 +6,8 @@ namespace QuestTextEditor.Data
     {
         public enum Coded : uint
         {
-            DATA_CODED,
-            DATA_NO_CODED
+            DATA_CODED = 0,
+            DATA_NO_CODED = 1,
         }
 
         public class MessageDataHeader
@@ -19,6 +19,11 @@ namespace QuestTextEditor.Data
             public List<uint> ofsLangBlocks;
 
             public uint ByteSize => sizeof(ushort) + sizeof(ushort) + sizeof(uint) + sizeof(Coded) + ((uint)ofsLangBlocks.Count * sizeof(uint));
+
+            public MessageDataHeader()
+            {
+                ofsLangBlocks = new List<uint>();
+            }
         }
 
         public class MessageStringParameterBlock
@@ -36,6 +41,13 @@ namespace QuestTextEditor.Data
             public List<MessageStringParameterBlock> parameters;
             public List<string> messages;
             public List<byte[]> encodedMessages;
+
+            public MessageLanguageBlock()
+            {
+                parameters = new List<MessageStringParameterBlock>();
+                messages = new List<string>();
+                encodedMessages = new List<byte[]>();
+            }
         }
 
         public MessageDataHeader header;
@@ -49,6 +61,8 @@ namespace QuestTextEditor.Data
 
         public void ReadFromBytes(byte[] data)
         {
+            ClearData();
+
             using (MemoryStream ms = new MemoryStream(data))
             using (BinaryReader br = new BinaryReader(ms))
             {
@@ -64,31 +78,33 @@ namespace QuestTextEditor.Data
                 for (int i=0; i<header.numLangs; i++)
                     blocks.Add(new MessageLanguageBlock());
 
-                blocks[0].parameters = new List<MessageStringParameterBlock>();
-                blocks[0].size = br.ReadUInt32();
-                for (int i=0; i<header.numStrings; i++)
+                for (int i=0; i<header.numLangs; i++)
                 {
-                    MessageStringParameterBlock mspb = new MessageStringParameterBlock();
-                    mspb.offset = br.ReadUInt32();
-                    mspb.len = br.ReadUInt16();
-                    mspb.userParam = br.ReadUInt16();
-                    blocks[0].parameters.Add(mspb);
-                }
+                    ms.Seek(header.ofsLangBlocks[i], SeekOrigin.Begin);
 
-                blocks[0].messages = new List<string>();
-                blocks[0].encodedMessages = new List<byte[]>();
-                for (int i=0; i<blocks[0].parameters.Count; i++)
-                {
-                    var mspb = blocks[0].parameters[i];
-                    var ms_offset = mspb.offset + header.ofsLangBlocks[0];
-                    ms.Seek(ms_offset, SeekOrigin.Begin);
+                    blocks[i].size = br.ReadUInt32();
+                    for (int j=0; j<header.numStrings; j++)
+                    {
+                        MessageStringParameterBlock mspb = new MessageStringParameterBlock();
+                        mspb.offset = br.ReadUInt32();
+                        mspb.len = br.ReadUInt16();
+                        mspb.userParam = br.ReadUInt16();
+                        blocks[i].parameters.Add(mspb);
+                    }
 
-                    byte[] bytes = new byte[mspb.len*2];
-                    for (int j=0; j<bytes.Length; j++)
-                        bytes[j] = br.ReadByte();
+                    for (int j=0; j<blocks[i].parameters.Count; j++)
+                    {
+                        var mspb = blocks[i].parameters[j];
+                        var ms_offset = mspb.offset + header.ofsLangBlocks[i];
+                        ms.Seek(ms_offset, SeekOrigin.Begin);
 
-                    blocks[0].encodedMessages.Add(bytes);
-                    blocks[0].messages.Add(DecodeString(bytes, header.reserved, (ushort)(10627 * i + 31881)));
+                        byte[] bytes = new byte[mspb.len*2];
+                        for (int k=0; k<bytes.Length; k++)
+                            bytes[k] = br.ReadByte();
+
+                        blocks[i].encodedMessages.Add(bytes);
+                        blocks[i].messages.Add(DecodeString(bytes, header.reserved, (ushort)(10627 * j + 31881)));
+                    }
                 }
             }
         }
@@ -128,11 +144,11 @@ namespace QuestTextEditor.Data
             }
         }
 
-        public string ExportText()
+        public string ExportText(int lang)
         {
             StringBuilder sb = new StringBuilder();
-            for (int i=0; i<blocks[0].messages.Count; i++)
-                sb.AppendLine(blocks[0].messages[i]);
+            for (int i=0; i<blocks[lang].messages.Count; i++)
+                sb.AppendLine(blocks[lang].messages[i]);
 
             return sb.ToString();
         }
@@ -230,6 +246,17 @@ namespace QuestTextEditor.Data
                 header.ofsLangBlocks[i] = currentBlockOffset;
                 currentBlockOffset += blocks[i].size;
             }
+        }
+
+        private void ClearData()
+        {
+            header.numLangs = 0;
+            header.numStrings = 0;
+            header.maxLangBlockSize = 0;
+            header.reserved = Coded.DATA_CODED;
+            header.ofsLangBlocks.Clear();
+
+            blocks.Clear();
         }
     }
 }

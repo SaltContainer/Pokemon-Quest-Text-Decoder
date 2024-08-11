@@ -27,9 +27,9 @@
             encodedData.blocks[lang].parameters[labelIndex].userParam = userParam;
         }
 
-        public string ExportAllText()
+        public string ExportAllText(int lang)
         {
-            return encodedData.ExportText();
+            return encodedData.ExportText(lang);
         }
 
         public byte[] ConvertToBytes()

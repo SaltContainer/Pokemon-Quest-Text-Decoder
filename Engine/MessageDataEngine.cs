@@ -20,9 +20,9 @@ namespace QuestTextEditor.Engine
             File.WriteAllBytes(path, data.ConvertToBytes());
         }
 
-        public void SaveMessageDataToTextFile(string path, MessageData data)
+        public void SaveMessageDataToTextFile(string path, MessageData data, int lang)
         {
-            File.WriteAllText(path, data.ExportAllText());
+            File.WriteAllText(path, data.ExportAllText(lang));
         }
     }
 }
