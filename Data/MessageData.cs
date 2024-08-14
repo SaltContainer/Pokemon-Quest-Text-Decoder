@@ -32,6 +32,11 @@
             return encodedData.ExportText(lang);
         }
 
+        public string ExportAsCSV(int lang, List<string> labelNames)
+        {
+            return encodedData.ExportAsCSV(lang, labelNames);
+        }
+
         public byte[] ConvertToBytes()
         {
             return encodedData.ConvertToBytes(EncodedMessageData.Coded.DATA_NO_CODED);

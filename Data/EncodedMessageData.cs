@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using CsvHelper;
+using System.Globalization;
+using System.Text;
 
 namespace QuestTextEditor.Data
 {
@@ -151,6 +153,25 @@ namespace QuestTextEditor.Data
                 sb.AppendLine(blocks[lang].messages[i]);
 
             return sb.ToString();
+        }
+
+        public string ExportAsCSV(int lang, List<string> labelNames)
+        {
+            using var stream = new MemoryStream();
+            using var writer = new StreamWriter(stream);
+            using var reader = new StreamReader(stream);
+            using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+
+            csv.WriteRecords(
+                labelNames.Zip(blocks[lang].messages,
+                    (n, m) => (n, m))
+                .Zip(blocks[lang].parameters.Select(p => p.userParam),
+                    (nm, p) => new { LabelName = nm.n, Label = nm.m, UserParam = p }));
+
+            writer.Flush();
+
+            reader.BaseStream.Seek(0, SeekOrigin.Begin);
+            return reader.ReadToEnd();
         }
 
         private string DecodeString(byte[] rawData, Coded mode, ushort key)

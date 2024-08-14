@@ -28,7 +28,8 @@ public partial class FormMain : Form
         btnOpen.Enabled = !IsLoaded;
         btnOpenDataSet.Enabled = !IsLoaded;
 
-        btnSaveTxt.Enabled = IsLoaded;
+        btnImportCSV.Enabled = IsLoaded;
+        btnSaveCSV.Enabled = IsLoaded;
         btnSaveBin.Enabled = IsLoaded;
 
         rtxtLabel.Enabled = IsLoaded;
@@ -40,9 +41,8 @@ public partial class FormMain : Form
 
     private void BindListBox(int lang)
     {
-        var source = labelDataSet.data.Data.Where(d => d.FileName == labelFileName);
-        if (source.Any())
-            listLabels.DataSource = source.Select(d => d.Id).Take(data.data.LabelCount).ToList();
+        if (GetMessageLabelNames().Any())
+            listLabels.DataSource = GetMessageLabelNames().Select(d => d.Id).Take(data.data.LabelCount).ToList();
         else
             listLabels.DataSource = data.data[lang];
     }
@@ -89,11 +89,16 @@ public partial class FormMain : Form
             int cabIndex = pathFileName.IndexOf("-CAB-");
             if (cabIndex > 0)
                 labelFileName = pathFileName.Substring(0, cabIndex);
-            else if (labelDataSet.data != null && labelDataSet.data.Data.Any(d => d.FileName == pathFileName))
+            else if (labelDataSet.data?[pathFileName].Any() ?? false)
                 labelFileName = pathFileName;
             else
                 labelFileName = string.Empty;
         }
+    }
+
+    private IList<MessageLabel> GetMessageLabelNames()
+    {
+        return labelDataSet.data[labelFileName];
     }
 
     private void UpdateLanguage(int lang)
@@ -130,13 +135,24 @@ public partial class FormMain : Form
         }
     }
 
+    private void btnImportCSV_Click(object sender, EventArgs e)
+    {
+        using OpenFileDialog openFileDialog = new OpenFileDialog();
+        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        {
+            var newData = engine.ReadMessageDataFromCSVFile(openFileDialog.FileName);
+            UpdateListBox();
+            UpdateLangBox();
+        }
+    }
+
     private void btnSaveTxt_Click(object sender, EventArgs e)
     {
         using SaveFileDialog saveFileDialog = new SaveFileDialog();
         if (saveFileDialog.ShowDialog() == DialogResult.OK)
         {
-            engine.SaveMessageDataToTextFile(saveFileDialog.FileName, data.data, CurrentLanguage);
-            MessageBox.Show("Successfully exported the text!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            engine.SaveMessageDataToCSVFile(saveFileDialog.FileName, data.data, CurrentLanguage, GetMessageLabelNames().Select(l => l.Id).ToList());
+            MessageBox.Show("Successfully exported the CSV!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 

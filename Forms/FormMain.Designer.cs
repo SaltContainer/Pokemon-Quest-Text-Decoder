@@ -30,7 +30,7 @@ partial class FormMain
     {
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
         btnOpen = new Button();
-        btnSaveTxt = new Button();
+        btnSaveCSV = new Button();
         btnSaveLabel = new Button();
         btnSaveBin = new Button();
         listLabels = new ListBox();
@@ -41,6 +41,7 @@ partial class FormMain
         btnOpenDataSet = new Button();
         numLang = new NumericUpDown();
         lbLang = new Label();
+        btnImportCSV = new Button();
         ((System.ComponentModel.ISupportInitialize)numUserParam).BeginInit();
         grpLabel.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)numLang).BeginInit();
@@ -51,29 +52,29 @@ partial class FormMain
         btnOpen.Image = Resources.Resources.folder;
         btnOpen.Location = new Point(12, 12);
         btnOpen.Name = "btnOpen";
-        btnOpen.Size = new Size(122, 45);
+        btnOpen.Size = new Size(120, 45);
         btnOpen.TabIndex = 0;
         btnOpen.Text = "Open Bin";
         btnOpen.TextImageRelation = TextImageRelation.ImageBeforeText;
         btnOpen.UseVisualStyleBackColor = true;
         btnOpen.Click += btnOpen_Click;
         // 
-        // btnSaveTxt
+        // btnSaveCSV
         // 
-        btnSaveTxt.Image = Resources.Resources.save;
-        btnSaveTxt.Location = new Point(268, 12);
-        btnSaveTxt.Name = "btnSaveTxt";
-        btnSaveTxt.Size = new Size(118, 45);
-        btnSaveTxt.TabIndex = 2;
-        btnSaveTxt.Text = "Save Text";
-        btnSaveTxt.TextImageRelation = TextImageRelation.ImageBeforeText;
-        btnSaveTxt.UseVisualStyleBackColor = true;
-        btnSaveTxt.Click += btnSaveTxt_Click;
+        btnSaveCSV.Image = Resources.Resources.save;
+        btnSaveCSV.Location = new Point(264, 12);
+        btnSaveCSV.Name = "btnSaveCSV";
+        btnSaveCSV.Size = new Size(120, 45);
+        btnSaveCSV.TabIndex = 2;
+        btnSaveCSV.Text = "Save as CSV";
+        btnSaveCSV.TextImageRelation = TextImageRelation.ImageBeforeText;
+        btnSaveCSV.UseVisualStyleBackColor = true;
+        btnSaveCSV.Click += btnSaveTxt_Click;
         // 
         // btnSaveLabel
         // 
         btnSaveLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-        btnSaveLabel.Location = new Point(126, 169);
+        btnSaveLabel.Location = new Point(130, 170);
         btnSaveLabel.Name = "btnSaveLabel";
         btnSaveLabel.Size = new Size(110, 38);
         btnSaveLabel.TabIndex = 7;
@@ -84,9 +85,9 @@ partial class FormMain
         // btnSaveBin
         // 
         btnSaveBin.Image = Resources.Resources.save;
-        btnSaveBin.Location = new Point(392, 12);
+        btnSaveBin.Location = new Point(390, 12);
         btnSaveBin.Name = "btnSaveBin";
-        btnSaveBin.Size = new Size(118, 45);
+        btnSaveBin.Size = new Size(120, 45);
         btnSaveBin.TabIndex = 3;
         btnSaveBin.Text = "Save Bin";
         btnSaveBin.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -98,9 +99,9 @@ partial class FormMain
         listLabels.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
         listLabels.FormattingEnabled = true;
         listLabels.ItemHeight = 15;
-        listLabels.Location = new Point(12, 98);
+        listLabels.Location = new Point(12, 143);
         listLabels.Name = "listLabels";
-        listLabels.Size = new Size(250, 214);
+        listLabels.Size = new Size(246, 214);
         listLabels.TabIndex = 4;
         listLabels.SelectedIndexChanged += listLabels_SelectedIndexChanged;
         // 
@@ -109,17 +110,17 @@ partial class FormMain
         rtxtLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         rtxtLabel.Location = new Point(6, 22);
         rtxtLabel.Name = "rtxtLabel";
-        rtxtLabel.Size = new Size(230, 112);
+        rtxtLabel.Size = new Size(234, 113);
         rtxtLabel.TabIndex = 5;
         rtxtLabel.Text = "";
         // 
         // numUserParam
         // 
         numUserParam.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-        numUserParam.Location = new Point(82, 140);
+        numUserParam.Location = new Point(82, 141);
         numUserParam.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
         numUserParam.Name = "numUserParam";
-        numUserParam.Size = new Size(154, 23);
+        numUserParam.Size = new Size(158, 23);
         numUserParam.TabIndex = 6;
         // 
         // grpLabel
@@ -129,9 +130,9 @@ partial class FormMain
         grpLabel.Controls.Add(numUserParam);
         grpLabel.Controls.Add(rtxtLabel);
         grpLabel.Controls.Add(btnSaveLabel);
-        grpLabel.Location = new Point(268, 98);
+        grpLabel.Location = new Point(264, 143);
         grpLabel.Name = "grpLabel";
-        grpLabel.Size = new Size(242, 213);
+        grpLabel.Size = new Size(246, 214);
         grpLabel.TabIndex = 7;
         grpLabel.TabStop = false;
         grpLabel.Text = "Label Data";
@@ -140,7 +141,7 @@ partial class FormMain
         // 
         lbUserParam.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         lbUserParam.AutoSize = true;
-        lbUserParam.Location = new Point(6, 142);
+        lbUserParam.Location = new Point(6, 143);
         lbUserParam.Name = "lbUserParam";
         lbUserParam.Size = new Size(70, 15);
         lbUserParam.TabIndex = 7;
@@ -149,9 +150,9 @@ partial class FormMain
         // btnOpenDataSet
         // 
         btnOpenDataSet.Image = Resources.Resources.folder;
-        btnOpenDataSet.Location = new Point(140, 12);
+        btnOpenDataSet.Location = new Point(138, 12);
         btnOpenDataSet.Name = "btnOpenDataSet";
-        btnOpenDataSet.Size = new Size(122, 45);
+        btnOpenDataSet.Size = new Size(120, 45);
         btnOpenDataSet.TabIndex = 1;
         btnOpenDataSet.Text = "Open Label DataSet";
         btnOpenDataSet.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -160,33 +161,46 @@ partial class FormMain
         // 
         // numLang
         // 
-        numLang.Location = new Point(80, 69);
+        numLang.Location = new Point(80, 76);
         numLang.Maximum = new decimal(new int[] { 2, 0, 0, 0 });
         numLang.Name = "numLang";
-        numLang.Size = new Size(54, 23);
+        numLang.Size = new Size(52, 23);
         numLang.TabIndex = 8;
         numLang.ValueChanged += numLang_ValueChanged;
         // 
         // lbLang
         // 
         lbLang.AutoSize = true;
-        lbLang.Location = new Point(12, 71);
+        lbLang.Location = new Point(12, 78);
         lbLang.Name = "lbLang";
         lbLang.Size = new Size(62, 15);
         lbLang.TabIndex = 9;
         lbLang.Text = "Language:";
         // 
+        // btnImportCSV
+        // 
+        btnImportCSV.Image = Resources.Resources.folder;
+        btnImportCSV.Location = new Point(138, 63);
+        btnImportCSV.Name = "btnImportCSV";
+        btnImportCSV.Size = new Size(120, 45);
+        btnImportCSV.TabIndex = 10;
+        btnImportCSV.Text = "Import CSV";
+        btnImportCSV.TextImageRelation = TextImageRelation.ImageBeforeText;
+        btnImportCSV.UseVisualStyleBackColor = true;
+        btnImportCSV.Click += btnImportCSV_Click;
+        // 
         // FormMain
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(522, 324);
+        ClientSize = new Size(522, 369);
         Controls.Add(lbLang);
         Controls.Add(numLang);
         Controls.Add(grpLabel);
         Controls.Add(listLabels);
         Controls.Add(btnSaveBin);
-        Controls.Add(btnSaveTxt);
+        Controls.Add(btnSaveCSV);
+        Controls.Add(btnImportCSV);
         Controls.Add(btnOpenDataSet);
         Controls.Add(btnOpen);
         Icon = (Icon)resources.GetObject("$this.Icon");
@@ -204,7 +218,7 @@ partial class FormMain
     #endregion
 
     private Button btnOpen;
-    private Button btnSaveTxt;
+    private Button btnSaveCSV;
     private Button btnSaveLabel;
     private Button btnSaveBin;
     private ListBox listLabels;
@@ -215,4 +229,5 @@ partial class FormMain
     private Button btnOpenDataSet;
     private NumericUpDown numLang;
     private Label lbLang;
+    private Button btnImportCSV;
 }
