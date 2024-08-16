@@ -7,7 +7,6 @@ public partial class FormMain : Form
 {
     private (string path, MessageData data) data;
     private (string path, MessageLabelDataSet data) labelDataSet;
-    private string labelFileName = string.Empty;
 
     private MessageDataEngine engine;
 
@@ -25,8 +24,8 @@ public partial class FormMain : Form
 
     private void EnableComponents()
     {
-        btnOpen.Enabled = !IsLoaded;
-        btnOpenDataSet.Enabled = !IsLoaded;
+        btnOpen.Enabled = true;
+        btnOpenDataSet.Enabled = true;
 
         btnImportCSV.Enabled = IsLoaded;
         btnSaveCSV.Enabled = IsLoaded;
@@ -41,10 +40,10 @@ public partial class FormMain : Form
 
     private void BindListBox(int lang)
     {
-        if (GetMessageLabelNames().Any())
-            listLabels.DataSource = GetMessageLabelNames().Select(d => d.Id).Take(data.data.LabelCount).ToList();
+        if (data.data.LabelNames.Any())
+            listLabels.DataSource = data.data.LabelNames.Take(data.data.LabelCount).ToList();
         else
-            listLabels.DataSource = data.data[lang];
+            listLabels.DataSource = data.data.GetDefaultLabelRepresentations(lang);
     }
 
     private void ReadLabelData(int lang, int selectedIndex)
@@ -63,7 +62,8 @@ public partial class FormMain : Form
     {
         if (IsLoaded)
         {
-            AutoFindLabelFileName(data.path);
+            data.data.FileName = AutoFindLabelFileName(data.path);
+            data.data.SetUpLabelNames(labelDataSet.data);
             UpdateLanguage(CurrentLanguage);
             SetLabelData(CurrentLanguage, CurrentLabel);
         }
@@ -77,28 +77,23 @@ public partial class FormMain : Form
         }
     }
 
-    private void AutoFindLabelFileName(string path)
+    private string AutoFindLabelFileName(string path)
     {
         string pathFileName = Path.GetFileName(path);
         if (string.IsNullOrEmpty(pathFileName))
         {
-            labelFileName = string.Empty;
+            return string.Empty;
         }
         else
         {
             int cabIndex = pathFileName.IndexOf("-CAB-");
             if (cabIndex > 0)
-                labelFileName = pathFileName.Substring(0, cabIndex);
+                return pathFileName.Substring(0, cabIndex);
             else if (labelDataSet.data?[pathFileName].Any() ?? false)
-                labelFileName = pathFileName;
+                return pathFileName;
             else
-                labelFileName = string.Empty;
+                return string.Empty;
         }
-    }
-
-    private IList<MessageLabel> GetMessageLabelNames()
-    {
-        return labelDataSet.data[labelFileName];
     }
 
     private void UpdateLanguage(int lang)
@@ -140,7 +135,7 @@ public partial class FormMain : Form
         using OpenFileDialog openFileDialog = new OpenFileDialog();
         if (openFileDialog.ShowDialog() == DialogResult.OK)
         {
-            var newData = engine.ReadMessageDataFromCSVFile(openFileDialog.FileName);
+            engine.ReadCSVFileIntoMessageData(openFileDialog.FileName, data.data, CurrentLanguage);
             UpdateListBox();
             UpdateLangBox();
         }
@@ -151,7 +146,7 @@ public partial class FormMain : Form
         using SaveFileDialog saveFileDialog = new SaveFileDialog();
         if (saveFileDialog.ShowDialog() == DialogResult.OK)
         {
-            engine.SaveMessageDataToCSVFile(saveFileDialog.FileName, data.data, CurrentLanguage, GetMessageLabelNames().Select(l => l.Id).ToList());
+            engine.SaveMessageDataToCSVFile(saveFileDialog.FileName, data.data, CurrentLanguage);
             MessageBox.Show("Successfully exported the CSV!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }

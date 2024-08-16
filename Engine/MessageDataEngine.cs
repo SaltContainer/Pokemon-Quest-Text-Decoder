@@ -1,5 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using Newtonsoft.Json;
 using QuestTextEditor.Data;
+using System.Globalization;
 
 namespace QuestTextEditor.Engine
 {
@@ -10,11 +13,11 @@ namespace QuestTextEditor.Engine
             return new MessageData(File.ReadAllBytes(path));
         }
 
-        public MessageData ReadMessageDataFromCSVFile(string path)
+        public void ReadCSVFileIntoMessageData(string path, MessageData data, int lang)
         {
-            // TODO: Read CSV
-            // Method on MessageData that changes the data directly?
-            return new MessageData(Array.Empty<byte>());
+            using var reader = new StreamReader(path);
+            using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false });
+            data.ImportFromCSV(lang, csv.GetRecords<CSVLabel>().ToList());
         }
 
         public MessageLabelDataSet ReadMessageLabelDataSetFromJSONFile(string path)
@@ -32,9 +35,9 @@ namespace QuestTextEditor.Engine
             File.WriteAllText(path, data.ExportAllText(lang));
         }
 
-        public void SaveMessageDataToCSVFile(string path, MessageData data, int lang, List<string> labelNames)
+        public void SaveMessageDataToCSVFile(string path, MessageData data, int lang)
         {
-            File.WriteAllText(path, data.ExportAsCSV(lang, labelNames));
+            File.WriteAllText(path, data.ExportAsCSV(lang));
         }
     }
 }

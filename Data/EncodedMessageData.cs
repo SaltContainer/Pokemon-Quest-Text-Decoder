@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using CsvHelper.Configuration;
 using System.Globalization;
 using System.Text;
 
@@ -160,18 +161,32 @@ namespace QuestTextEditor.Data
             using var stream = new MemoryStream();
             using var writer = new StreamWriter(stream);
             using var reader = new StreamReader(stream);
-            using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+            using var csv = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = false });
 
             csv.WriteRecords(
                 labelNames.Zip(blocks[lang].messages,
                     (n, m) => (n, m))
                 .Zip(blocks[lang].parameters.Select(p => p.userParam),
-                    (nm, p) => new { LabelName = nm.n, Label = nm.m, UserParam = p }));
+                    (nm, p) => new CSVLabel { LabelName = nm.n, Label = nm.m, UserParam = p }));
 
             writer.Flush();
 
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
             return reader.ReadToEnd();
+        }
+
+        public void ImportFromCSV(int lang, List<CSVLabel> data, List<string> labelNames)
+        {
+            for (int i=0; i<labelNames.Count; i++)
+            {
+                var labelName = labelNames[i];
+                var csvLabel = data.Find(l => l.LabelName == labelName);
+                if (csvLabel != null)
+                {
+                    blocks[lang].messages[i] = csvLabel.Label;
+                    blocks[lang].parameters[i].userParam = csvLabel.UserParam;
+                }
+            }
         }
 
         private string DecodeString(byte[] rawData, Coded mode, ushort key)
