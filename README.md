@@ -10,15 +10,19 @@ A tool to edit the Mobile version of Pokémon Quest's encrypted TextAssets.
 
 A full editor to change any label of an imported Pokémon Quest TextAsset.
 - Import a UABEA exported .bytes file from the TextAsset in an AssetBundle.
+- Select the language block to look at.
 - Select a label to edit in the list and then change its contents and its UserParam.
 - The editor automatically re-calculates the Metadata of the file so the labels are read properly.
 - Rebuilding the binary file is done in "non-coded" mode, so the data within the file is raw UTF-8 encoded strings.
 - The exported binary file can be re-imported in UABEA.
 
-### Text Exporter
+### CSV Importer/Exporter
 
-If you just want to export the text into a basic .txt file, you can!
-- Each line of the file is a label, with nothing else special.
+If you just want to import/export the text from/to a .csv file, you can!
+In both cases, the format is headerless with the values LabelName, Value, UserParam, in that order.
+- Import a CSV file to replace labels.
+  - Does not add new labels if it cannot find specific label names from the CSV in the currently loaded .bytes file.
+- Export the currently loaded labels to a CSV file.
 
 ## Special Thanks
 

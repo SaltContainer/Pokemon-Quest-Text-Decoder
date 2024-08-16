@@ -13,8 +13,8 @@
     <Copyright></Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/SaltContainer/QuestTextEditor</RepositoryUrl>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
     <Authors>SaltContainer</Authors>
     <ApplicationIcon>Resources\ditto-quest.ico</ApplicationIcon>
   </PropertyGroup>
