@@ -114,7 +114,7 @@ namespace QuestTextEditor.Data
 
         public byte[] ConvertToBytes()
         {
-            RegenerateMetadata(header.reserved);
+            RegenerateMetadata();
 
             using (MemoryStream ms = new MemoryStream())
             using (BinaryWriter bw = new BinaryWriter(ms))
