@@ -112,9 +112,9 @@ namespace QuestTextEditor.Data
             }
         }
 
-        public byte[] ConvertToBytes(Coded mode)
+        public byte[] ConvertToBytes()
         {
-            RegenerateMetadata(mode);
+            RegenerateMetadata(header.reserved);
 
             using (MemoryStream ms = new MemoryStream())
             using (BinaryWriter bw = new BinaryWriter(ms))
@@ -225,7 +225,7 @@ namespace QuestTextEditor.Data
             }
         }
 
-        private byte[] EncodeString(Coded mode, string str)
+        private byte[] EncodeString(Coded mode, string str, ushort key)
         {
             using (MemoryStream ms = new MemoryStream())
             using (BinaryWriter bw = new BinaryWriter(ms))
@@ -243,8 +243,18 @@ namespace QuestTextEditor.Data
                     }
 
                     case Coded.DATA_CODED:
-                        // TODO: Reverse the encoding
-                        return Array.Empty<byte>();
+                        for (int i=0; i<str.Length; i++)
+                        {
+                            ushort chara = str[i];
+                            chara ^= key;
+                            bw.Write(chara);
+
+                            key = (ushort)((ushort)(key >> 13) | 8 * key);
+                        }
+
+                        bw.Write((ushort)0);
+
+                        return ms.ToArray();
 
                     default:
                         return Array.Empty<byte>();
@@ -252,11 +262,10 @@ namespace QuestTextEditor.Data
             }
         }
 
-        private void RegenerateMetadata(Coded mode)
+        private void RegenerateMetadata()
         {
             header.numLangs = (ushort)blocks.Count;
             header.numStrings = (ushort)blocks[0].messages.Count;
-            header.reserved = mode;
 
             for (int i=0; i<blocks.Count; i++)
             {
@@ -265,7 +274,7 @@ namespace QuestTextEditor.Data
                 {
                     blocks[i].parameters[j].offset = blocks[i].size;
 
-                    var bytes = EncodeString(mode, blocks[i].messages[j]);
+                    var bytes = EncodeString(header.reserved, blocks[i].messages[j], (ushort)(10627 * j + 31881));
                     blocks[i].encodedMessages[j] = bytes;
 
                     blocks[i].parameters[j].len = (ushort)((bytes.Length - 2) / 2);

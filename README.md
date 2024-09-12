@@ -13,7 +13,7 @@ A full editor to change any label of an imported Pokémon Quest TextAsset.
 - Select the language block to look at.
 - Select a label to edit in the list and then change its contents and its UserParam.
 - The editor automatically re-calculates the Metadata of the file so the labels are read properly.
-- Rebuilding the binary file is done in "non-coded" mode, so the data within the file is raw UTF-8 encoded strings.
+- Rebuilding the binary file is done in either "non-coded" mode (raw UTF-8 encoded strings) or "coded" mode (encoded like it normally is in vanilla).
 - The exported binary file can be re-imported in UABEA.
 
 ### CSV Importer/Exporter
@@ -27,3 +27,4 @@ In both cases, the format is headerless with the values LabelName, Value, UserPa
 ## Special Thanks
 
 - ­[xiofee](https://github.com/xiofee) for the original [Pokémon Quest Text Decoder](https://github.com/xiofee/Pokemon-Quest-Text-Decoder) from which this repo is forked.
+- [Kurt (kwsch)](https://github.com/kwsch) for making [xytext](https://github.com/kwsch/xytext) which also allows editing this format of file.

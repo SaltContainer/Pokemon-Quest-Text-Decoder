@@ -42,6 +42,7 @@ partial class FormMain
         numLang = new NumericUpDown();
         lbLang = new Label();
         btnImportCSV = new Button();
+        checkEncoded = new CheckBox();
         ((System.ComponentModel.ISupportInitialize)numUserParam).BeginInit();
         grpLabel.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)numLang).BeginInit();
@@ -189,11 +190,24 @@ partial class FormMain
         btnImportCSV.UseVisualStyleBackColor = true;
         btnImportCSV.Click += btnImportCSV_Click;
         // 
+        // checkEncoded
+        // 
+        checkEncoded.AutoSize = true;
+        checkEncoded.Checked = true;
+        checkEncoded.CheckState = CheckState.Checked;
+        checkEncoded.Location = new Point(264, 63);
+        checkEncoded.Name = "checkEncoded";
+        checkEncoded.Size = new Size(170, 19);
+        checkEncoded.TabIndex = 11;
+        checkEncoded.Text = "Coded Mode for Bin Export";
+        checkEncoded.UseVisualStyleBackColor = true;
+        // 
         // FormMain
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(522, 369);
+        Controls.Add(checkEncoded);
         Controls.Add(lbLang);
         Controls.Add(numLang);
         Controls.Add(grpLabel);
@@ -230,4 +244,5 @@ partial class FormMain
     private NumericUpDown numLang;
     private Label lbLang;
     private Button btnImportCSV;
+    private CheckBox checkEncoded;
 }

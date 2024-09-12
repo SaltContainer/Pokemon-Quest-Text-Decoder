@@ -55,7 +55,7 @@
 
         public byte[] ConvertToBytes()
         {
-            return encodedData.ConvertToBytes(EncodedMessageData.Coded.DATA_NO_CODED);
+            return encodedData.ConvertToBytes();
         }
 
         public void SetUpLabelNames(MessageLabelDataSet dataSet)

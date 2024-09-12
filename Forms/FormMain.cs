@@ -30,6 +30,7 @@ public partial class FormMain : Form
         btnImportCSV.Enabled = IsLoaded;
         btnSaveCSV.Enabled = IsLoaded;
         btnSaveBin.Enabled = IsLoaded;
+        checkEncoded.Enabled = IsLoaded;
 
         rtxtLabel.Enabled = IsLoaded;
         btnSaveLabel.Enabled = IsLoaded;
@@ -156,6 +157,7 @@ public partial class FormMain : Form
         using SaveFileDialog saveFileDialog = new SaveFileDialog();
         if (saveFileDialog.ShowDialog() == DialogResult.OK)
         {
+            data.data.EncodingMethod = checkEncoded.Enabled ? EncodedMessageData.Coded.DATA_CODED : EncodedMessageData.Coded.DATA_NO_CODED;
             engine.SaveMessageDataToBinFile(saveFileDialog.FileName, data.data);
             MessageBox.Show("Successfully exported the re-encoded text!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
